@@ -73,6 +73,7 @@ while True:
     price = get_price()
     if price is not None:
         print("Current price of BTC: $", price)
+        # @Anson Integration part TODO replace this function with the AI model to take the decision.
         buy_order, sell_order, balance = take_decision(
             price, balance, buy_order, sell_order
         )
