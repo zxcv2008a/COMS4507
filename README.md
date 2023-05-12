@@ -11,4 +11,4 @@ https://colab.research.google.com/drive/1AGS3Bpfa-T6gZ2XOKrkK_Ni_lBLFwDL1?usp=sh
 
 # TO run LSTM Model
 You need to use Jupyter Notebook or Google Colab. You can access a live version from this:
-https://drive.google.com/file/d/1NRc2A6ZpxLcBYuGQHJmX_2wnXyXidgSe/view?usp=sharing
+https://colab.research.google.com/github/zxcv2008a/COMS4507/blob/main/LSTM_Project4507.ipynb
