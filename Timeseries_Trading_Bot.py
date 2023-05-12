@@ -17,15 +17,15 @@ INITIAL_BALANCE = 1000000  # $1 million
 INTERVALS = 5  # seconds
 MINIMUM_GROWTH = 0.02  # minimum 2% increase in predicted price to trigger buy
 STOP_LOSS_PERCENTAGE = 0.05  # limit loss to 5%
-GOAL = 1200000 # $1.2 million
+GOAL = 1200000  # $1.2 million
 
 """ Time Series Prediction Functions """
 
 
 def preprocess_data(data_url):
     df = pd.read_csv(data_url)
-    df = df.drop(['Adj Close'], axis=1)
-    df.rename(columns={'Date': 'ds', 'Close': 'y'}, inplace=True)
+    df = df.drop(["Adj Close"], axis=1)
+    df.rename(columns={"Date": "ds", "Close": "y"}, inplace=True)
     return df
 
 
@@ -50,10 +50,19 @@ def predict_future_price(model, days_to_predict=60):
     predicted_price = predict_with_prophet(model, input_data)
     # gets the predicted price for tomorrow
     tmr = str(date.today() + timedelta(days=1))
-    return predicted_price.loc[predicted_price['ds'] == tmr, 'yhat'].values[0]
+    return predicted_price.loc[predicted_price["ds"] == tmr, "yhat"].values[0]
+
 
 class BitcoinTransaction:
-    def __init__(self, transaction_type, price, amount, volume, profit_or_loss=None, transaction_trigger=None):
+    def __init__(
+        self,
+        transaction_type,
+        price,
+        amount,
+        volume,
+        profit_or_loss=None,
+        transaction_trigger=None,
+    ):
         self.transaction_type = transaction_type
         self.price = price
         self.amount = amount
@@ -63,7 +72,7 @@ class BitcoinTransaction:
         self.transaction_id = uuid.uuid4()
 
     def __str__(self):
-        return f'Transaction ID: {self.transaction_id}, Transaction Type: {self.transaction_type}, Price: {self.price}, Amount: {self.amount} BTC, Volume: {self.volume}, Profit/Loss: {self.profit_or_loss}, Transaction Trigger: {self.transaction_trigger}'
+        return f"Transaction ID: {self.transaction_id}, Transaction Type: {self.transaction_type}, Price: {self.price}, Amount: {self.amount} BTC, Volume: {self.volume}, Profit/Loss: {self.profit_or_loss}, Transaction Trigger: {self.transaction_trigger}"
 
     def __repr__(self):
         return f"({str(self)})"
@@ -101,13 +110,17 @@ def take_decision(current_price, predicted_price, balance, buy_order, sell_order
                 amount = balance
                 # Place the buy order
                 trigger = "Predicted future growth"
-                buy_order = BitcoinTransaction(TransactionTypes.BUY, current_price, amount, volume, trigger)
+                buy_order = BitcoinTransaction(
+                    TransactionTypes.BUY, current_price, amount, volume, trigger
+                )
                 print("New buy order placed:", buy_order)
                 balance -= amount
             else:
                 print("Insufficient balance to place a new buy order")
         else:
-            print(f"Predicted future price does not meet the minimum growth requirement ({MINIMUM_GROWTH * 100}%) for buy trigger")
+            print(
+                f"Predicted future price does not meet the minimum growth requirement ({MINIMUM_GROWTH * 100}%) for buy trigger"
+            )
     elif sell_order is None:
         # Check if current price has fallen to trigger stoploss sell, minimize loss
         if current_price <= buy_order.price * (1 - STOP_LOSS_PERCENTAGE):
@@ -117,7 +130,13 @@ def take_decision(current_price, predicted_price, balance, buy_order, sell_order
             profit_or_loss = volume * (current_price - buy_order.price)
             trigger = "Current price triggered stoploss"
             sell_order = BitcoinTransaction(
-                TransactionTypes.SELL, current_price, amount, volume, profit_or_loss, trigger)
+                TransactionTypes.SELL,
+                current_price,
+                amount,
+                volume,
+                profit_or_loss,
+                trigger,
+            )
             print("New sell order placed:", sell_order)
             balance += amount
         # Check if investment goal has been reached
@@ -128,7 +147,13 @@ def take_decision(current_price, predicted_price, balance, buy_order, sell_order
             profit_or_loss = volume * (current_price - buy_order.price)
             trigger = "Investment goal reached"
             sell_order = BitcoinTransaction(
-                TransactionTypes.SELL, current_price, amount, volume, profit_or_loss, trigger)
+                TransactionTypes.SELL,
+                current_price,
+                amount,
+                volume,
+                profit_or_loss,
+                trigger,
+            )
             print("New sell order placed:", sell_order)
             balance += amount
         # Check if predicted future price will fall below stoploss of current price, prevent possible loss
@@ -139,7 +164,13 @@ def take_decision(current_price, predicted_price, balance, buy_order, sell_order
             profit_or_loss = volume * (current_price - buy_order.price)
             trigger = "Predicted future price triggered stoploss"
             sell_order = BitcoinTransaction(
-                TransactionTypes.SELL, current_price, amount, volume, profit_or_loss, trigger)
+                TransactionTypes.SELL,
+                current_price,
+                amount,
+                volume,
+                profit_or_loss,
+                trigger,
+            )
             print("New sell order placed:", sell_order)
             balance += amount
         else:
@@ -147,11 +178,18 @@ def take_decision(current_price, predicted_price, balance, buy_order, sell_order
 
     return buy_order, sell_order, balance
 
+
 def configure_browser_state():
-  display(IPython.core.display.HTML('''
+    display(
+        IPython.core.display.HTML(
+            """
     <canvas id="myChart"></canvas>
-  '''))
-  display(IPython.core.display.HTML('''
+  """
+        )
+    )
+    display(
+        IPython.core.display.HTML(
+            """
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
         <script>
           var ctx = document.getElementById('myChart').getContext('2d');
@@ -228,8 +266,11 @@ def configure_browser_state():
             chart.update();
           }
         </script>
-        '''))
-    
+        """
+        )
+    )
+
+
 # Main program
 def main():
     balance = INITIAL_BALANCE
@@ -238,11 +279,11 @@ def main():
     goal_reached = False
 
     # Ready graph display
-    configure_browser_state() 
+    configure_browser_state()
 
     # url = 'https://raw.githubusercontent.com/yetanotherpassword/COMS4507/main/BTC-USD.csv'
     # update this url to new dataset for future retraining.
-    url = 'https://raw.githubusercontent.com/AnsonCNS/COMS4507/main/BTC-USD_2023-05-07.csv'
+    url = "https://raw.githubusercontent.com/AnsonCNS/COMS4507/main/BTC-USD_2023-05-07.csv"
     preprocessed_data = preprocess_data(url)
     last_day_index = len(preprocessed_data.index)
     # split dataset into 85% training (311/365 days), 15% testing (54/365 days)
@@ -252,7 +293,7 @@ def main():
     transaction_record = []
     profit_and_loss_record = []
 
-    #FIXME the line below is for experimental demonstration, remove line to get real prices
+    # FIXME the line below is for experimental demonstration, remove line to get real prices
     price = get_price()
 
     # keep running the bot if there is positive balance or an existing buy order has been placed.
@@ -263,12 +304,16 @@ def main():
 
         # FIXME
         # the following line is for experimental demonstration, remove line to get real prices
-        current_price = random.randint(int(price*(1-0.1)), int(price*(1+0.1)))
+        current_price = random.randint(int(price * (1 - 0.1)), int(price * (1 + 0.1)))
 
         if current_price is not None:
             print("Current price of BTC: $", current_price)
             predicted_price = predict_future_price(model)
-            display(Javascript('addData('+str(current_price)+','+str(predicted_price)+')'))
+            display(
+                Javascript(
+                    "addData(" + str(current_price) + "," + str(predicted_price) + ")"
+                )
+            )
             print("Predicted future price of BTC: $", predicted_price)
             buy_order, sell_order, balance = take_decision(
                 current_price, predicted_price, balance, buy_order, sell_order
@@ -278,7 +323,9 @@ def main():
                 # record transaction
                 transaction_record.append(sell_order)
                 print("Sell order fulfilled. Profit: $", sell_order.profit_or_loss)
-                profit_and_loss_record.append({sell_order.transaction_id: sell_order.profit_or_loss})
+                profit_and_loss_record.append(
+                    {sell_order.transaction_id: sell_order.profit_or_loss}
+                )
 
                 # reset orders
                 buy_order = None
@@ -287,11 +334,10 @@ def main():
             elif buy_order:
                 # record transaction
                 transaction_record.append(buy_order)
-            
+
             if balance >= GOAL:
                 goal_reached = True
                 print("Investment goal reached! Stop trading.")
-            
 
             print("Remaining balance (USD): $", balance, "\n")
 
@@ -304,5 +350,5 @@ def main():
     print("Profit and Loss:", profit_and_loss_record)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

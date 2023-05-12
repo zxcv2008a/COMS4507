@@ -11,7 +11,7 @@ STOP_LOSS_PERCENTAGE = 0.05  # 5%
 # Functions
 def get_price():
     url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
-    headers = {"X-CMC_PRO_API_KEY": os.getenv("COINMARKETKEY")}
+    headers = {"X-CMC_PRO_API_KEY": "a6b2b27b-929b-4bff-83fc-0fc17a43c08b"}
     params = {"symbol": "BTC"}
     response = requests.get(url, headers=headers, params=params)
     if response.status_code == 200:
