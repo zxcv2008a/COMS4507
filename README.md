@@ -4,7 +4,7 @@ To run the Model make sure the API key is working and not invalidated.
 
 # To run Algorithm_bot.py
 
-python3 Algorithm_bot.py
+$ python3 Algorithm_bot.py
 
 # To run Prophet model Timeseries_Trading_Bot.py
 
