@@ -11,7 +11,7 @@ python3 Algorithm_bot.py
 You need to use Jupyter Notebook or Google Colab. You can access a live version from this:
 https://colab.research.google.com/drive/1DxOdcbFpAHkOzFrn25hxq-iKWE_YOT2l?usp=sharing
 
-# TO run LSTM Model
+# To run LSTM Model
 
 You need to use Jupyter Notebook or Google Colab. You can access a live version from this:
 https://colab.research.google.com/github/zxcv2008a/COMS4507/blob/main/LSTM_Project4507.ipynb
